@@ -16,8 +16,12 @@ const selectedProject =
 const currentProject =
   document.getElementById("currentProject");
 
+const taskSummary =
+  document.getElementById("taskSummary");
+
 
 let selectedProjectName = null;
+
 
 
 /* =========================
@@ -36,6 +40,7 @@ let projectTasks =
     "Marketing Campaign": []
 
   };
+
 
 
 /* =========================
@@ -59,6 +64,7 @@ let projectStatuses =
   };
 
 
+
 /* =========================
    SAVE TASKS
 ========================= */
@@ -71,6 +77,7 @@ function saveTasks() {
   );
 
 }
+
 
 
 /* =========================
@@ -87,14 +94,16 @@ function saveProjectStatuses() {
 }
 
 
+
 /* =========================
-   LOAD PROJECT STATUS
+   PROJECT STATUS
 ========================= */
 
 projectCards.forEach(function (projectCard) {
 
   const projectName =
     projectCard.dataset.project;
+
 
   const statusDropdown =
     projectCard.querySelector(
@@ -113,12 +122,14 @@ projectCards.forEach(function (projectCard) {
       projectStatuses[projectName] =
         statusDropdown.value;
 
+
       saveProjectStatuses();
 
     }
   );
 
 });
+
 
 
 /* =========================
@@ -163,6 +174,7 @@ projectCards.forEach(function (projectCard) {
 });
 
 
+
 /* =========================
    ADD TASK
 ========================= */
@@ -170,6 +182,7 @@ projectCards.forEach(function (projectCard) {
 addTaskButton.addEventListener(
   "click",
   function () {
+
 
     if (selectedProjectName === null) {
 
@@ -219,26 +232,73 @@ addTaskButton.addEventListener(
 );
 
 
+
 /* =========================
    DISPLAY TASKS
 ========================= */
 
 function displayTasks() {
 
+
   taskList.innerHTML = "";
 
 
   if (selectedProjectName === null) {
+
+    taskSummary.textContent =
+      "Total: 0 | Pending: 0 | Completed: 0";
 
     return;
 
   }
 
 
-  projectTasks[
-    selectedProjectName
-  ].forEach(
+  const tasks =
+    projectTasks[
+      selectedProjectName
+    ];
+
+
+  let completedCount = 0;
+
+
+  tasks.forEach(function (task) {
+
+    if (task.completed) {
+
+      completedCount++;
+
+    }
+
+  });
+
+
+  const totalCount =
+    tasks.length;
+
+
+  const pendingCount =
+    totalCount -
+    completedCount;
+
+
+  taskSummary.textContent =
+    "Total: " +
+    totalCount +
+    " | Pending: " +
+    pendingCount +
+    " | Completed: " +
+    completedCount;
+
+
+
+  /* =========================
+     CREATE TASK ELEMENTS
+  ========================== */
+
+  tasks.forEach(
     function (task, index) {
+
 
       const taskItem =
         document.createElement("li");
@@ -275,9 +335,15 @@ function displayTasks() {
         "Delete";
 
 
+
+      /* =========================
+         COMPLETE TASK
+      ========================== */
+
       taskTextElement.addEventListener(
         "click",
         function () {
+
 
           task.completed =
             !task.completed;
@@ -292,9 +358,15 @@ function displayTasks() {
       );
 
 
+
+      /* =========================
+         DELETE TASK
+      ========================== */
+
       deleteButton.addEventListener(
         "click",
         function () {
+
 
           projectTasks[
             selectedProjectName
@@ -309,6 +381,11 @@ function displayTasks() {
         }
       );
 
+
+
+      /* =========================
+         ADD ELEMENTS TO TASK
+      ========================== */
 
       taskItem.appendChild(
         taskTextElement
@@ -333,24 +410,3 @@ function displayTasks() {
   );
 
 }
-
-
-/* =========================
-   LOAD SAVED PROJECT STATUS
-========================= */
-
-projectCards.forEach(function (projectCard) {
-
-  const projectName =
-    projectCard.dataset.project;
-
-  const statusDropdown =
-    projectCard.querySelector(
-      ".project-status"
-    );
-
-
-  statusDropdown.value =
-    projectStatuses[projectName];
-
-});
